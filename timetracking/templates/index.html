@@ -2,24 +2,29 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Task Durations</title>
 </head>
 <body>
-    
-    {% if report %}
-        <ul>
-            {% for item in report %}
-
-                <li>
-                    {{item.duration}} hours
-                </li>
-
+    <h1>Task Durations</h1>
+    <table border="1" style="width: 50%;">
+        <thead>
+            <tr>
+                <th>Project</th>
+                <th>Task</th>
+                <th>Assignee</th>
+                <th>Total Duration</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for task in report %}
+            <tr>
+                <td>{{ task.task__project__name }}</td>
+                <td>{{ task.task__title }}</td>
+                <td>{{ task.task__assigne }}</td>
+                <td>{{ task.total_duration }} hours</td>
+            </tr>
             {% endfor %}
-        </ul>
-    {% else %}
-        <p>No report found</p>
-    {% endif %}
-    
+        </tbody>
+    </table>
 </body>
 </html>

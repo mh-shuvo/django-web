@@ -3,10 +3,11 @@ from django.http import HttpResponse
 from .models import TimeLog
 from django.template import loader
 def index(request):
-    report = TimeLog.objects.order_by("-date")[:5]
-    output = ",".join([str(time.duration) for time in report])
-    # return HttpResponse(output)
+    
+    report = TimeLog.get_task_durations()
+
     template = loader.get_template("index.html")
+    
     return HttpResponse(template.render({
         "report": report
     },request))
