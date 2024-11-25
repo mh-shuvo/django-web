@@ -45,7 +45,7 @@ class TimeLog(models.Model):
         ordering = ["-log_id"]
 
     def __str__(self):
-        return f"Log {self.log_id} on {self.date}"
+        return f"{self.task.title}({self.duration} hours) on {self.date}"
 
 
     @classmethod

@@ -21,7 +21,7 @@
                 <td>{{ task.task__project__name }}</td>
                 <td>{{ task.task__title }}</td>
                 <td>{{ task.task__assigne }}</td>
-                <td>{{ task.total_duration }} hours</td>
+                <td>{{ task.total_duration|floatformat:2 }} hours</td>
             </tr>
             {% endfor %}
         </tbody>
