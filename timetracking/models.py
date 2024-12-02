@@ -2,6 +2,7 @@ from django.db import models
 from django.utils import timezone
 from django.db import models
 from django.db.models import Sum
+from django.utils.timezone import now
 class Project(models.Model):
     project_id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=50)
@@ -29,6 +30,9 @@ class Task(models.Model):
     
     def __str__(self):
         return f"{self.project.name}: {self.title}";
+    @classmethod
+    def get_info_by_id(cls,id):
+        return cls.objects.filter(task_id=id).first()
 
 
 class TimeLog(models.Model):
@@ -50,6 +54,26 @@ class TimeLog(models.Model):
 
     @classmethod
     def get_task_durations(cls):
+        current_date = now().date()
+        task_durations = cls.objects.filter(
+            date = current_date
+        ).values(
+            'task__task_id', 
+            'task__project__name', 
+            'task__title', 
+            'task__assigne'
+        ).annotate(
+            total_duration=Sum('duration')
+        )
+        return task_durations
+    
+    @classmethod
+    def get_task_time_logs_by_id(cls,id):
+        tasks = cls.objects.filter(task_id=id).all()
+        return tasks
+    
+    @classmethod
+    def get_all_task_durations(cls):
         task_durations = cls.objects.values(
             'task__task_id', 
             'task__project__name', 
