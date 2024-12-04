@@ -83,3 +83,11 @@ class TimeLog(models.Model):
             total_duration=Sum('duration')
         )
         return task_durations
+    
+    @classmethod
+    def get_today_total_work_duration(cls):
+        
+        current_date = now().date()
+        
+        total_duration = cls.objects.filter(date=current_date).aggregate(total_duration=Sum('duration'))['total_duration']
+        return total_duration or 0

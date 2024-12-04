@@ -12,6 +12,9 @@
 
    <div  style="margin-left: 2%; margin-right: 2%;">
         <h3>On working report (today)</h3>
+        <h4>
+            So far, <span style="color: {% if total_work_in_today < 4 %}red{% else %}green{% endif %};">{{total_work_in_today|floatformat:2}}</span> hours have been spent on work.
+        </h4>
         <table border="1" style="width: 100%;">
             <thead>
                 <tr>

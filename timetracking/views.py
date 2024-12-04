@@ -5,13 +5,15 @@ from django.template import loader
 def index(request):
     
     report = TimeLog.get_task_durations()
+    total_work_duration_in_today = TimeLog.get_today_total_work_duration()
     full_report = TimeLog.get_all_task_durations()
 
     template = loader.get_template("index.html")
     
     return HttpResponse(template.render({
         "report": report,
-        "full_report": full_report
+        "full_report": full_report,
+        "total_work_in_today": total_work_duration_in_today
     },request))
 
 def history(request,id):
