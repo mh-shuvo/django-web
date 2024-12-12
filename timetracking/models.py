@@ -3,6 +3,8 @@ from django.utils import timezone
 from django.db import models
 from django.db.models import Sum
 from django.utils.timezone import now
+from datetime import date, timedelta
+
 class Project(models.Model):
     project_id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=50)
@@ -84,6 +86,21 @@ class TimeLog(models.Model):
         )
         return task_durations
     
+    @classmethod
+    def get_current_week_work_duration(cls):
+        today = date.today()
+        # Calculate the start of the week (Saturday)
+        start_of_week = today - timedelta(days=(today.weekday() + 2) % 7)
+        # Calculate the end of the week (Friday)
+        end_of_week = start_of_week + timedelta(days=6)
+
+        # Query the total duration for this week
+        total_duration = TimeLog.objects.filter(
+            date__range=(start_of_week, end_of_week)
+        ).aggregate(total=Sum('duration'))['total']
+
+        return total_duration
+
     @classmethod
     def get_today_total_work_duration(cls):
         
