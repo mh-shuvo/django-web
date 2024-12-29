@@ -1,12 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Task Durations</title>
-</head>
-<body>
-    <h1>TimeLog histories</h1>
-    <a href="/">Home</a>
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}TMS Task History{% endblock %}
+{% block content %}
+    <h1>Task histories</h1>
     <ul>
         <li>
             <b>Project: </b> {{task_info.project.name}}
@@ -41,5 +38,4 @@
             {% endfor %}
         </tbody>
     </table>
-</body>
-</html>
+    {% endblock %}

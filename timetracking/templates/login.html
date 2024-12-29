@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}TMS Moderator Login{% endblock %}
+{% block content %}
+    <h1>Moderator Login</h1>
+    {% if form.errors %}
+        <p style="color: red;">Invalid credentials. Please try again.</p>
+    {% endif %}
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-dark">Login</button>
+    </form>
+{% endblock %}

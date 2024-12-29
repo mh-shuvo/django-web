@@ -1,105 +1,83 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>TimeLog Management System</title>
-    <style>
-        .circle {
-            width: 100px;               /* Set the width of the circle */
-            height: 100px;              /* Set the height of the circle */
-            background-color: green;    /* Set the background color */
-            border-radius: 50%;         /* Make the div circular */
-            display: flex;              /* Use flexbox for centering */
-            justify-content: center;    /* Center text horizontally */
-            align-items: center;        /* Center text vertically */
-            color: white;               /* Optional: Text color for visibility */
-            font-size: 16px;            /* Optional: Text size */
-            text-align: center;         /* Optional: Align text within the element */
-        }
-    </style>
-</head>
-<body>
-    <div style="margin-left: 2%;">
-        <h1>TimeLog Management System</h1>
-        <p style="color: gray;">Welcome to TimeLog Management System</p>
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}TMS Home{% endblock %}
+{% block content %}
+<div  style="margin-left: 2%; margin-right: 2%;">
+
+<div class="row">
+    <div class="col-8">
+        <h4>Toda's Report</h4>
+        <h5>
+            So far, <span style="color: {% if total_work_in_today < 4 %}red{% else %}green{% endif %};">{{total_work_in_today|floatformat:2}}</span> hours have been spent on work.
+        </h4>
     </div>
-
-   <div  style="margin-left: 2%; margin-right: 2%;">
-
-    <div>
-        <div style="float: left;">
-            <h3>On working report (today)</h3>
-            <h4>
-                So far, <span style="color: {% if total_work_in_today < 4 %}red{% else %}green{% endif %};">{{total_work_in_today|floatformat:2}}</span> hours have been spent on work.
-            </h4>
-        </div>
-        <div style="float: right;">
-            <div class="circle" style="float: right;background-color: {% if total_work_in_week < 32.5 %}red{% else %}green{% endif %}; font-size:20px;font-weight:bold;" title="Total Work In This Week">
-                <p>{{total_work_in_week|floatformat:2}}</p>
-            </div>
+    <div class="col-4">
+        <div class="circle" style="float: right;background-color: {% if total_work_in_week < 32.5 %}red{% else %}green{% endif %}; font-size:20px;font-weight:bold;" title="Total Work In This Week">
+            <p>{{total_work_in_week|floatformat:2}}</p>
         </div>
     </div>
+</div>
 
-    <div>
-        <table border="1" style="width: 100%;">
-            <thead>
-                <tr>
-                    <th width="30%">Project</th>
-                    <th width="30%">Task</th>
-                    <th>Assignee</th>
-                    <th>Total Duration</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for task in report %}
-                <tr>
-                    <td>{{ task.task__project__name }}</td>
-                    <td>{{ task.task__title }}</td>
-                    <td>{{ task.task__assigne }}</td>
-                    <td>
-                        <div style="float: left;">
-                            {{ task.total_duration|floatformat:2 }} hours
-                        </div>
-                        <div style="float: right;">
-                            <a href="{% url 'history' id=task.task__task_id %}">See history</a>
-                        </div>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-   </div>
+<div>
+    <table class="table" style="width: 100%;">
+        <thead>
+            <tr>
+                <th width="30%">Project</th>
+                <th width="30%">Task</th>
+                <th>Assignee</th>
+                <th>Total Duration</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for task in report %}
+            <tr>
+                <td>{{ task.task__project__name }}</td>
+                <td>{{ task.task__title }}</td>
+                <td>{{ task.task__assigne }}</td>
+                <td>
+                    <div style="float: left;">
+                        {{ task.total_duration|floatformat:2 }} hours
+                    </div>
+                    <div style="float: right;">
+                        <a href="{% url 'history' id=task.task__task_id %}">See history</a>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+</div>
 
-   <div  style="margin-left: 2%; margin-right: 2%;">
-        <h3>All Tasks</h3>
-        <table border="1" style="width: 100%;">
-            <thead>
-                <tr>
-                    <th width="30%">Project</th>
-                    <th width="30%">Task</th>
-                    <th>Assignee</th>
-                    <th>Total Duration</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for task in full_report %}
-                <tr>
-                    <td>{{ task.task__project__name }}</td>
-                    <td>{{ task.task__title }}</td>
-                    <td>{{ task.task__assigne }}</td>
-                    <td>
-                        <div style="float: left;">
-                            {{ task.total_duration|floatformat:2 }} hours
-                        </div>
-                        <div style="float: right;">
-                            <a href="{% url 'history' id=task.task__task_id %}">See history</a>
-                        </div>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-   </div>
-</body>
-</html>
+<div>
+    <h3>All Tasks</h3>
+    <table class="table table-striped table-bordered" style="width: 100%;">
+        <thead>
+            <tr>
+                <th width="30%">Project</th>
+                <th width="30%">Task</th>
+                <th>Assignee</th>
+                <th>Total Duration</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for task in full_report %}
+            <tr>
+                <td>{{ task.task__project__name }}</td>
+                <td>{{ task.task__title }}</td>
+                <td>{{ task.task__assigne }}</td>
+                <td>
+                    <div style="float: left;">
+                        {{ task.total_duration|floatformat:2 }} hours
+                    </div>
+                    <div style="float: right;">
+                        <a href="{% url 'history' id=task.task__task_id %}">See history</a>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

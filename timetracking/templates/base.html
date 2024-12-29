@@ -1,0 +1,100 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}My Django App{% endblock %}</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
+    <style>
+        html, body {
+            height: 100%; /* Ensures the body takes the full viewport height */
+            margin: 0; /* Removes default margin */
+            display: flex;
+            flex-direction: column; /* Makes the layout vertical */
+        }
+        main{
+            flex: 1;
+        }
+
+        header {
+            background: #333;
+            color: #fff;
+        }
+
+        footer {
+            background: #333;
+            color: #fff;
+            text-align: center;
+            padding: 10px 0;
+        }
+        nav a {
+            color: #fff;
+            text-decoration: none;
+            margin-right: 10px;
+        }
+        .active {
+            font-weight: bold;
+            color: #ff6600;
+        }
+        .circle {
+            width: 100px;               /* Set the width of the circle */
+            height: 100px;              /* Set the height of the circle */
+            background-color: green;    /* Set the background color */
+            border-radius: 50%;         /* Make the div circular */
+            display: flex;              /* Use flexbox for centering */
+            justify-content: center;    /* Center text horizontally */
+            align-items: center;        /* Center text vertically */
+            color: white;               /* Optional: Text color for visibility */
+            font-size: 16px;            /* Optional: Text size */
+            text-align: center;         /* Optional: Align text within the element */
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="bg-dark text-white py-3">
+        <div class="container">
+            <h1>TimeLog Management System</h1>
+            <p>Track your time, track your life.</p>
+            <nav>
+                <a href="{% url 'index' %}" class="{% if request.resolver_match.url_name == 'index' %}active{% endif %}">Home</a>
+
+                {% if user.is_authenticated %}
+                    <a href="{% url 'moderator_home' %}" class="{% if request.resolver_match.url_name == 'moderator_home' %}active{% endif %}">Moderator Dashboard</a>
+                    <a href="javascript:void(0)" id="logout">Logout</a>
+                {% else %}
+                    <a href="{% url 'login' %}" class="{% if request.resolver_match.url_name == 'login' %}active{% endif %}">Login</a>
+                {% endif %}
+            </nav>            
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container my-5">
+        {% block content %}
+        <!-- Child templates will inject content here -->
+        {% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-3 text-center">
+        <div class="container">
+            <p>&copy; 2024 My Django App. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+
+    <form action="{% url 'logout' %}" method="post">
+        {% csrf_token %}
+    </form>
+
+
+    <script>
+        document.getElementById('logout').addEventListener('click', function() {
+            document.querySelector('form').submit();
+        });
+    </script>
+
+</body>
+</html>
