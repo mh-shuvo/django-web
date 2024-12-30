@@ -4,6 +4,7 @@ from django.db import models
 from django.db.models import Sum
 from django.utils.timezone import now
 from datetime import date, timedelta
+from django.contrib.auth.models import User
 
 class Project(models.Model):
     project_id = models.AutoField(primary_key=True)
@@ -22,7 +23,8 @@ class Task(models.Model):
     task_id = models.AutoField(primary_key=True)
     project = models.ForeignKey(Project, on_delete=models.SET_NULL, null=True, blank=True)
     title = models.CharField(max_length=50)
-    assigne = models.CharField(max_length=70)
+    # assigne = models.CharField(max_length=70)
+    assigne = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True,default=1)
     description = models.TextField(null=True,blank=True)
     created_at = models.DateTimeField(blank=True, default=timezone.now)
     updated_at = models.DateTimeField(blank=True, null=True)
@@ -55,15 +57,14 @@ class TimeLog(models.Model):
 
 
     @classmethod
-    def get_task_durations(cls):
+    def get_task_durations(cls,user_id):
         current_date = now().date()
         task_durations = cls.objects.filter(
             date = current_date
-        ).values(
+        ).filter(task__assigne=user_id).values(
             'task__task_id', 
             'task__project__name', 
-            'task__title', 
-            'task__assigne'
+            'task__title'
         ).annotate(
             total_duration=Sum('duration')
         )
@@ -75,19 +76,18 @@ class TimeLog(models.Model):
         return tasks
     
     @classmethod
-    def get_all_task_durations(cls):
-        task_durations = cls.objects.values(
+    def get_all_task_durations(cls,user_id):
+        task_durations = cls.objects.filter(task__assigne = user_id).values(
             'task__task_id', 
             'task__project__name', 
-            'task__title', 
-            'task__assigne'
+            'task__title'
         ).annotate(
             total_duration=Sum('duration')
         )
         return task_durations
     
     @classmethod
-    def get_current_week_work_duration(cls):
+    def get_current_week_work_duration(cls,user_id):
         today = date.today()
         # Calculate the start of the week (Saturday)
         start_of_week = today - timedelta(days=(today.weekday() + 2) % 7)
@@ -97,14 +97,14 @@ class TimeLog(models.Model):
         # Query the total duration for this week
         total_duration = TimeLog.objects.filter(
             date__range=(start_of_week, end_of_week)
-        ).aggregate(total=Sum('duration'))['total']
+        ).filter(task__assigne = user_id).aggregate(total=Sum('duration'))['total']
 
         return total_duration
 
     @classmethod
-    def get_today_total_work_duration(cls):
+    def get_today_total_work_duration(cls,user_id):
         
         current_date = now().date()
         
-        total_duration = cls.objects.filter(date=current_date).aggregate(total_duration=Sum('duration'))['total_duration']
+        total_duration = cls.objects.filter(date=current_date).filter(task__assigne = user_id).aggregate(total_duration=Sum('duration'))['total_duration']
         return total_duration or 0

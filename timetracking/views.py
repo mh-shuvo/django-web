@@ -3,19 +3,29 @@ from django.http import HttpResponse
 from .models import TimeLog,Task
 from django.template import loader
 def index(request):
+    if request.user.is_authenticated is False:
+        return render(request, 'welcome.html')
     
-    current_week_duration = TimeLog.get_current_week_work_duration();
-    report = TimeLog.get_task_durations()
-    total_work_duration_in_today = TimeLog.get_today_total_work_duration()
-    full_report = TimeLog.get_all_task_durations()
+    
+    current_week_duration = TimeLog.get_current_week_work_duration(request.user.id);
+    report = TimeLog.get_task_durations(request.user.id)
+    total_work_duration_in_today = TimeLog.get_today_total_work_duration(request.user.id)
 
     template = loader.get_template("index.html")
     
     return HttpResponse(template.render({
         "report": report,
-        "full_report": full_report,
         "total_work_in_today": total_work_duration_in_today,
         "total_work_in_week": current_week_duration
+    },request))
+
+def get_working_histories(request):
+    full_report = TimeLog.get_all_task_durations(request.user.id)
+
+    template = loader.get_template("working_histories.html")
+    
+    return HttpResponse(template.render({
+        "report": full_report,
     },request))
 
 def history(request,id):

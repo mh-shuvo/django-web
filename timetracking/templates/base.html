@@ -58,9 +58,9 @@
             <h1>TimeLog Management System</h1>
             <p>Track your time, track your life.</p>
             <nav>
-                <a href="{% url 'index' %}" class="{% if request.resolver_match.url_name == 'index' %}active{% endif %}">Home</a>
-
+                <a href="{% url 'index' %}" class="{% if request.resolver_match.url_name == 'index' %}active{% endif %}">Home</a>            
                 {% if user.is_authenticated %}
+                    <a href="{% url 'working_histories' %}" class="{% if request.resolver_match.url_name == 'working_histories' %}active{% endif %}">Working Histories</a>
                     <a href="{% url 'moderator_home' %}" class="{% if request.resolver_match.url_name == 'moderator_home' %}active{% endif %}">Moderator Dashboard</a>
                     <a href="javascript:void(0)" id="logout">Logout</a>
                 {% else %}
