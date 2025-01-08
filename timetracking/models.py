@@ -83,7 +83,7 @@ class TimeLog(models.Model):
             'task__title'
         ).annotate(
             total_duration=Sum('duration')
-        )
+        ).order_by('-log_id')
         return task_durations
     
     @classmethod
@@ -107,4 +107,24 @@ class TimeLog(models.Model):
         current_date = now().date()
         
         total_duration = cls.objects.filter(date=current_date).filter(task__assigne = user_id).aggregate(total_duration=Sum('duration'))['total_duration']
+        return total_duration or 0
+    
+    @classmethod
+    def get_current_month_work_duration(cls, user_id):
+        today = now().date()
+        start_of_month = today.replace(day=1)
+        total_duration = cls.objects.filter(
+            date__range=(start_of_month, today),
+            task__assigne=user_id
+        ).aggregate(total_duration=Sum('duration'))['total_duration']
+        return total_duration or 0
+
+    @classmethod
+    def get_current_year_work_duration(cls, user_id):
+        today = now().date()
+        start_of_year = today.replace(month=1, day=1)
+        total_duration = cls.objects.filter(
+            date__range=(start_of_year, today),
+            task__assigne=user_id
+        ).aggregate(total_duration=Sum('duration'))['total_duration']
         return total_duration or 0

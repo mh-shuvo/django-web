@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from .models import TimeLog,Task
 from django.template import loader
+from django.contrib.auth.decorators import login_required
 def index(request):
     if request.user.is_authenticated is False:
         return render(request, 'welcome.html')
@@ -19,6 +20,7 @@ def index(request):
         "total_work_in_week": current_week_duration
     },request))
 
+@login_required(login_url='/login')
 def get_working_histories(request):
     full_report = TimeLog.get_all_task_durations(request.user.id)
 

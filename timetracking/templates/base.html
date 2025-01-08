@@ -61,7 +61,7 @@
                 <a href="{% url 'index' %}" class="{% if request.resolver_match.url_name == 'index' %}active{% endif %}">Home</a>            
                 {% if user.is_authenticated %}
                     <a href="{% url 'working_histories' %}" class="{% if request.resolver_match.url_name == 'working_histories' %}active{% endif %}">Working Histories</a>
-                    <a href="{% url 'moderator_home' %}" class="{% if request.resolver_match.url_name == 'moderator_home' %}active{% endif %}">Moderator Dashboard</a>
+                    <a href="{% url 'moderator_home' %}" class="{% if request.resolver_match.url_name == 'moderator_home' %}active{% endif %}">Dashboard</a>
                     <a href="javascript:void(0)" id="logout">Logout</a>
                 {% else %}
                     <a href="{% url 'login' %}" class="{% if request.resolver_match.url_name == 'login' %}active{% endif %}">Login</a>
@@ -80,7 +80,7 @@
     <!-- Footer -->
     <footer class="bg-dark text-white py-3 text-center">
         <div class="container">
-            <p>&copy; 2024 My Django App. All Rights Reserved.</p>
+            <p>&copy; {% now "Y" %} TMS. All Rights Reserved.</p>
         </div>
     </footer>
 

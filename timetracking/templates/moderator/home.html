@@ -5,4 +5,43 @@
 {% block content %}
     <h1>Welcome to the Moderator Panel!</h1>
     <p>Hello, {{ user.username }}. You are logged in.</p>
+    <div class="row">
+        <div class="col-3">
+            <div class="card bg-primary text-white text-center">
+                <div class="card-body">
+                    <p class="card-title">Today</p>
+                    <h4 class="card-text">{{today_duration|floatformat:2}}</h4>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-3">
+            <div class="card bg-success text-white text-center">
+                <div class="card-body">
+                    <p class="card-title">Current Week</p>
+                    <h4 class="card-text">{{week_duration|floatformat:2}}</h4>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-3">
+            <div class="card bg-info text-white text-center">
+                <div class="card-body">
+                    <p class="card-title">Current Month</p>
+                    <h4 class="card-text">{{month_duration|floatformat:2}}</h4>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-3">
+            <div class="card bg-dark text-white text-center">
+                <div class="card-body">
+                    <p class="card-title">Current Year</p>
+                    <h4 class="card-text">{{year_duration|floatformat:2}}</h4>
+                </div>
+            </div>
+        </div>
+
+    </div>
 {% endblock %}
