@@ -1,8 +1,9 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from .models import TimeLog,Task
+from .models import TimeLog,Task,WeeklyTarget
 from django.template import loader
 from django.contrib.auth.decorators import login_required
+from .helper import get_current_week_start_end_date
 def index(request):
     if request.user.is_authenticated is False:
         return render(request, 'welcome.html')
@@ -14,10 +15,18 @@ def index(request):
 
     template = loader.get_template("index.html")
     
+    current_week = WeeklyTarget.get_weekly_data_by_date(user_id=request.user.id)
+    start_of_week = current_week.week_start
+    end_of_week = current_week.week_end
+    target_duration = current_week.target_hours
+
     return HttpResponse(template.render({
         "report": report,
         "total_work_in_today": total_work_duration_in_today,
-        "total_work_in_week": current_week_duration
+        "total_work_in_week": current_week_duration,
+        "start_of_week": start_of_week,
+        "end_of_week": end_of_week,
+        "target_duration": target_duration
     },request))
 
 @login_required(login_url='/login')

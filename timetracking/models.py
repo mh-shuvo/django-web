@@ -5,7 +5,7 @@ from django.db.models import Sum
 from django.utils.timezone import now
 from datetime import date, timedelta
 from django.contrib.auth.models import User
-
+from .helper import get_current_week_start_end_date
 class Project(models.Model):
     project_id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=50)
@@ -38,7 +38,33 @@ class Task(models.Model):
     def get_info_by_id(cls,id):
         return cls.objects.filter(task_id=id).first()
 
+class WeeklyTarget(models.Model):
+    week_id = models.AutoField(primary_key=True)
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    target_hours = models.DecimalField(max_digits=10,decimal_places=2,default=0)
+    week_start = models.DateField()
+    week_end = models.DateField()
+    created_at = models.DateTimeField(blank=True, default=timezone.now)
+    updated_at = models.DateTimeField(blank=True, null=True)
 
+    class Meta:
+        ordering = ["-week_id"]
+    
+    def __str__(self):
+        return f"{self.user.username}: {self.target_hours} hours"
+    
+    @classmethod
+    def get_weekly_data_by_date(cls, user_id,date=None):
+        """
+        Fetch weekly target data where the given date falls between week_start and week_end.
+        If no date is provided, the current date is used.
+        """
+        date = date or now().date()
+        try:
+            return cls.objects.get(week_start__lte=date, week_end__gte=date,user=user_id)
+        except cls.DoesNotExist:
+            return None
+        
 class TimeLog(models.Model):
     log_id = models.AutoField(primary_key=True)
     task = models.ForeignKey(Task, on_delete=models.SET_NULL, null=True, blank=True)
@@ -88,12 +114,9 @@ class TimeLog(models.Model):
     
     @classmethod
     def get_current_week_work_duration(cls,user_id):
-        today = date.today()
-        # Calculate the start of the week (Saturday)
-        start_of_week = today - timedelta(days=(today.weekday() + 2) % 7)
-        # Calculate the end of the week (Friday)
-        end_of_week = start_of_week + timedelta(days=6)
-
+        current_week = WeeklyTarget.get_weekly_data_by_date(user_id=user_id)
+        start_of_week = current_week.week_start
+        end_of_week = current_week.week_end
         # Query the total duration for this week
         total_duration = TimeLog.objects.filter(
             date__range=(start_of_week, end_of_week)
