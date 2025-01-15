@@ -151,3 +151,16 @@ class TimeLog(models.Model):
             task__assigne=user_id
         ).aggregate(total_duration=Sum('duration'))['total_duration']
         return total_duration or 0
+    
+    @classmethod
+    def get_daily_report(cls,user_id,date=None):
+        current_date = now().date() if date is None else date
+        print(current_date)
+        daily_report = cls.objects.filter(date=current_date).filter(task__assigne=user_id).values(
+            'task__task_id', 
+            'task__project__name', 
+            'task__title'
+        ).annotate(
+            total_duration=Sum('duration')
+        )
+        return daily_report

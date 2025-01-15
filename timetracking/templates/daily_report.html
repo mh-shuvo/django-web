@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}TMS Task Daily Report{% endblock %}
+{% block content %}
+    <div class="row">
+        <div class="col-12 mb-3">
+            <form method="get" action="" class="form-inline">
+                <label for="date" class="mr-2">Select Date:</label>
+                <input type="date" id="date" name="date" class="form-control mr-2" value="{{ request.GET.date }}">
+                <button type="submit" class="btn btn-primary">Search</button>
+            </form>
+        </div>
+        <div class="col-12">
+            {% if report %}
+                <table class="table table-striped table-bordered" style="width: 100%;">
+                    <thead>
+                        <tr>
+                            <th width="30%">Project</th>
+                            <th width="30%">Task</th>
+                            <th>Total Duration</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for task in report %}
+                        <tr>
+                            <td>{{ task.task__project__name }}</td>
+                            <td>{{ task.task__title }}</td>
+                            <td>
+                                <div style="float: left;">
+                                    {{ task.total_duration|floatformat:2 }} hours
+                                </div>
+                                <div style="float: right;">
+                                    <a href="{% url 'history' id=task.task__task_id %}">See history</a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <div class="alert alert-warning text-center">
+                    No data found for the selected date.
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    {% endblock %}

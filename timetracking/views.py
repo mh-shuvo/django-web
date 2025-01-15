@@ -4,6 +4,7 @@ from .models import TimeLog,Task,WeeklyTarget
 from django.template import loader
 from django.contrib.auth.decorators import login_required
 from .helper import get_current_week_start_end_date
+from datetime import datetime
 def index(request):
     if request.user.is_authenticated is False:
         return render(request, 'welcome.html')
@@ -48,4 +49,16 @@ def history(request,id):
     return HttpResponse(template.render({
         "report": report,
         "task_info": task_info
+    },request))
+
+@login_required(login_url='/login')
+def get_daily_report(request):
+    date = request.GET.get('date')
+    date = datetime.strptime(date, '%Y-%m-%d').date() if date else None  
+    report = TimeLog.get_daily_report(request.user.id,date=date)
+
+    template = loader.get_template("daily_report.html")
+    
+    return HttpResponse(template.render({
+        "report": report,
     },request))
