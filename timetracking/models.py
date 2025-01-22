@@ -1,17 +1,17 @@
 from django.db import models
+from utils.custom import TimestampedModel
 from django.utils import timezone
-from django.db import models
 from django.db.models import Sum
 from django.utils.timezone import now
 from datetime import date, timedelta
 from django.contrib.auth.models import User
 from .helper import get_current_week_start_end_date
-class Project(models.Model):
+
+class Project(TimestampedModel):
     project_id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=50)
     details = models.TextField(null=True,blank=True)
-    created_at = models.DateTimeField(blank=True, default=timezone.now)
-    updated_at = models.DateTimeField(blank=True, null=True)
+    
 
     class Meta:
         ordering = ["-project_id"]
@@ -19,15 +19,13 @@ class Project(models.Model):
     def __str__(self):
         return self.name;
 
-class Task(models.Model):
+class Task(TimestampedModel):
     task_id = models.AutoField(primary_key=True)
     project = models.ForeignKey(Project, on_delete=models.SET_NULL, null=True, blank=True)
     title = models.CharField(max_length=50)
     # assigne = models.CharField(max_length=70)
     assigne = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True,default=1)
     description = models.TextField(null=True,blank=True)
-    created_at = models.DateTimeField(blank=True, default=timezone.now)
-    updated_at = models.DateTimeField(blank=True, null=True)
 
     class Meta:
         ordering = ["-task_id"]
@@ -38,14 +36,12 @@ class Task(models.Model):
     def get_info_by_id(cls,id):
         return cls.objects.filter(task_id=id).first()
 
-class WeeklyTarget(models.Model):
+class WeeklyTarget(TimestampedModel):
     week_id = models.AutoField(primary_key=True)
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
     target_hours = models.DecimalField(max_digits=10,decimal_places=2,default=0)
     week_start = models.DateField()
     week_end = models.DateField()
-    created_at = models.DateTimeField(blank=True, default=timezone.now)
-    updated_at = models.DateTimeField(blank=True, null=True)
 
     class Meta:
         ordering = ["-week_id"]
@@ -65,15 +61,13 @@ class WeeklyTarget(models.Model):
         except cls.DoesNotExist:
             return None
         
-class TimeLog(models.Model):
+class TimeLog(TimestampedModel):
     log_id = models.AutoField(primary_key=True)
     task = models.ForeignKey(Task, on_delete=models.SET_NULL, null=True, blank=True)
     date = models.DateField()
     start_time = models.DateTimeField(null=True, blank=True)
     end_time = models.DateTimeField(null=True, blank=True)
     duration = models.DecimalField(max_digits=10,decimal_places=2,default=0)
-    created_at = models.DateTimeField(blank=True, default=timezone.now)
-    updated_at = models.DateTimeField(blank=True, null=True)
 
     class Meta:
         ordering = ["-log_id"]
